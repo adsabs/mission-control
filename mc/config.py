@@ -19,7 +19,8 @@ WATCHED_REPOS = [
     'biblib-service',
     'orcid-service',
     'myads',
-    'object_service'
+    'object_service',
+    'harbour-service'
 ]
 
 # Local dependencies for the testing environment

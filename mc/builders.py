@@ -10,10 +10,11 @@ from mc.config import DOCKER_BRIDGE
 from mc.exceptions import BuildError, TimeOutError, UnknownServiceError
 from mc.provisioners import ConsulProvisioner, PostgresProvisioner, SolrProvisioner, TestProvisioner
 from flask import current_app
+from redis import Redis, ConnectionError
 from docker import Client
 from sqlalchemy.exc import OperationalError
 from sqlalchemy import create_engine
-from redis import Redis, ConnectionError
+from jinja2 import TemplateNotFound
 
 import os
 import io
@@ -123,11 +124,15 @@ class DockerImageBuilder(object):
         """
 
         # dockerfile
-        t = self.templates.get_template(
-            'docker/dockerfiles/{}.dockerfile.template'.format(
-                self.repo
+        try:
+            t = self.templates.get_template(
+                'docker/dockerfiles/{}.dockerfile.template'.format(self.repo)
             )
-        )
+        except TemplateNotFound:
+            t = self.templates.get_template(
+                'docker/dockerfiles/default.dockerfile.template'
+            )
+
         self.files.append({
             'name': 'Dockerfile',
             'content': t.render(commit=self.commit),

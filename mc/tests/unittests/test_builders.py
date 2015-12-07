@@ -134,6 +134,17 @@ class TestDockerImageBuilder(unittest.TestCase):
         self.assertEqual(self.builder.files[0]['name'], 'Dockerfile')
         self.assertIn(self.commit.commit_hash, self.builder.files[0]['content'])
 
+    def test_get_template_when_does_not_exist(self):
+        """
+        Test that the builder grabs a default template if there is not one
+        designed for that service
+        """
+        self.builder.repo = 'unknown repo'
+        self.builder.render_templates()
+
+        self.assertEqual(self.builder.files[0]['name'], 'Dockerfile')
+        self.assertIn(self.commit.commit_hash, self.builder.files[0]['content'])
+
     def test_create_docker_context(self):
         """
         Test that the docker context is created in-memory and that it has
